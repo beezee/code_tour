@@ -16,6 +16,7 @@ module CodeTour
       sample.files.map do |f|
         [f, `git cat-file -p $(git ls-tree #{sample.commit}
             #{f} | cut -d " " -f 3 | cut -f 1)`]
+      end
     end
 
     def format_sample(sample)
