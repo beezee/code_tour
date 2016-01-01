@@ -1,0 +1,112 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css"
+      href="http://fonts.googleapis.com/css?family=Raleway">
+    <link type="text/css" rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"></link>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <style>
+      .code pre {
+        margin: 0;
+        padding: 0 !important;
+        background-color: transparent !important;
+        border: 0;
+      }
+      .nums {
+        background-color: #eaeaea;
+        text-align: center;
+      }
+      .sample {
+        font-size: 10px;
+      }
+      .sample h5 {
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 0px;
+      }
+      .diff-file {
+        background: -webkit-linear-gradient(#fafafa, #eaeaea);
+        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=\'#fafafa\',endColorstr=\'#eaeaea\')";
+        border: 1px solid #d8d8d8;
+        border-bottom: 0;
+        color: #555;
+        font: 14px sans-serif;
+        overflow: hidden;
+        padding: 4px 5px;
+        text-shadow: 0 1px 0 white;
+        margin: 5px auto 0;
+        float: none;
+      }
+      .code .add {
+        background-color: #DDFFDD;
+        padding-left: 5%;
+        margin-left: -5%;
+        display:inline-block;
+        width: 200%;
+      }
+      .code .delete {
+        background-color: #FFDDDD;
+        padding-left: 5%;
+        margin-left: -5%;
+        display:inline-block;
+        width: 200%;
+      }
+      .code .at-linenums {
+        color: #9B9B99;
+      }
+      .tab {
+        width: 50px;
+        height: 13px;
+        display: inline-block;
+      }
+      .code {
+        border: 1px solid #cacaca;
+        line-height: 1.7em;
+        overflow: hidden;
+        overflow-x: scroll;
+        -webkit-border-radius: 0 0 3px 3px;
+        -moz-border-radius: 0 0 3px 3px;
+        border-radius: 0 0 3px 3px;
+        -moz-background-clip: padding;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        background-color: #FAFAFB;
+        color: #393939;
+        padding: 5px 5px;
+        margin: 0px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+    <% rendered_blocks.each do |block| %>
+      <div class="row">
+        <div class="five columns">
+          <%= block.content %>
+        </div>
+        <div class="seven columns sample">
+          <% block.sample.each do |file| %>
+            <div>
+              <div class="diff-file">
+                <h5><%= file.name %></h5>
+              </div>
+              <div class="code">
+                <% file.lines.each do |line| %>
+                  <div class="row">
+                    <div class="nums two columns">
+                      <%= line.line_numbers %>
+                    </div>
+                    <div class="ten columns">
+                      <%= line.content %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    </div>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 require "code_tour/version"
 require "code_tour/git"
 require "code_tour/console_renderer"
+require "code_tour/markdown_renderer"
 
 module CodeTour
   module CodeSample
