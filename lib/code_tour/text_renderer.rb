@@ -36,8 +36,8 @@ module CodeTour
               else
                 render_file_diff(f)
             end
-          end.join("\n\n")
-      end.join("\n")
+          end.join("\n\n") << "\n----\n\n"
+      end.join("\n\n")
     end
   end
 end
