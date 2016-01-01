@@ -1,7 +1,7 @@
 require 'colorize'
 
 module CodeTour
-  module TextRenderer
+  module ConsoleRenderer
 
     def render_file_static(f)
       f.name << "\n\n" <<
