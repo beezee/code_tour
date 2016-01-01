@@ -82,8 +82,7 @@ module CodeTour
     private
     def block(code_sample, &block)
       validate_code_sample!(code_sample)
-      content = block.call
-      @blocks.push(Block.new(code_sample, content))
+      @blocks.push(Block.new(code_sample, block.call))
     end
   end
 
