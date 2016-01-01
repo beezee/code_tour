@@ -1,15 +1,23 @@
 require "code_tour/version"
 require "code_tour/git"
+require "code_tour/text_renderer"
 
 module CodeTour
   module CodeSample
-    SampleLine = Struct.new(:number, :content)
     SampleFile = Struct.new(:name, :lines) do
       def valid?
         name.kind_of?(String) &&
           lines.kind_of?(Array) &&
           lines.all? {|l| l.kind_of?(SampleLine)}
       end
+    end
+
+    class SampleFileStatic < SampleFile
+    end
+
+    SampleLine = Struct.new(:old_number, :new_number, :content)
+
+    class ChunkHeaderLine < SampleLine
     end
 
     class RemovedLine < SampleLine
@@ -36,14 +44,6 @@ module CodeTour
       self.singleton_class.send(:include, i)
     end
 
-    def content_formatter(f)
-      unless f.respond_to?(:instance_methods) &&
-            f.instance_methods(false).include?(:format_content)
-        raise "#{f} is not a valid content formatter"
-      end
-      self.singleton_class.send(:include, f)
-    end
-
     def renderer(r)
       unless r.respond_to?(:instance_methods) &&
             r.instance_methods(false).include?(:render)
@@ -67,10 +67,12 @@ module CodeTour
     end
 
     def formatted_blocks
-      @blocks.map do |b|
-        Block.new(validated_formatted_sample!(b.sample),
-                  format_content(b.content))
-      end
+      @blocks
+        .dup
+        .map do |b|
+          Block.new(validated_formatted_sample!(b.sample.dup),
+                    b.content.dup)
+        end
     end
 
     def render_blocks
@@ -80,7 +82,8 @@ module CodeTour
     private
     def block(code_sample, &block)
       validate_code_sample!(code_sample)
-      @blocks.push(Block.new(code_sample, block.call))
+      content = block.call
+      @blocks.push(Block.new(code_sample, content))
     end
   end
 

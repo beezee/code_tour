@@ -1,47 +1,76 @@
+require 'code_tour/unified_diff_parser'
+
 module CodeTour
   module Git
-    Diff = Struct.new(:from_commit, :to_commit)
+    Show = Struct.new(:commit)
+    Diff1 = Struct.new(:commit)
+    Diff2 = Struct.new(:from_commit, :to_commit)
     FileDiff = Struct.new(:from_commit, :to_commit, :files)
     StaticFiles = Struct.new(:commit, :files)
 
     INVALID_SAMPLE = "Invalid code sample specified for Git integration"
 
     def validate_code_sample!(code_sample)
-      unless [Diff, FileDiff, StaticFiles].include?(code_sample.class)
+      unless [Show, Diff1, Diff2, FileDiff, StaticFiles]
+                .include?(code_sample.class)
         raise INVALID_SAMPLE
       end
     end
 
+    def git_cat_command(c, f)
+     "git cat-file -p $(git ls-tree #{c} #{f} | cut -d " +
+     '" " -f 3 | cut -f 1)'
+    end
+
     def git_cat(sample)
       sample.files.map do |f|
-        [f, `git cat-file -p $(git ls-tree #{sample.commit}
-            #{f} | cut -d " " -f 3 | cut -f 1)`]
+        CodeSample::SampleFile.new(f,
+          `#{git_cat_command(sample.commit, f)}`
+            .split("\n").each_with_index.map do |l, i|
+              CodeSample::SampleLine.new(i+1, l)
+            end)
       end
     end
 
-    def format_sample(sample)
-      git_output =
-        case sample.class
-        when Diff
-          `git diff #{sample.from_commit} #{sample.to_commit}`
-        when FileDiff
-          `git diff #{sample.from_commit} #{sample.to_commit}
-            #{files.join(" ")}`
-        when StaticFiles
-          git_cat(sample)
-        else
-          raise INVALID_SAMPLE
-        end
+    def parse_diff(diff)
+      UnifiedDiffParser.new(diff).parse
     end
 
-    def diff(from, to, files=nil)
+    def format_sample(s)
+      case s
+      when Show
+        parse_diff(
+          `git show #{s.commit}`)
+      when Diff1
+        parse_diff(
+          `git diff #{s.commit}`)
+      when Diff2
+        parse_diff(
+          `git diff #{s.from_commit} #{s.to_commit}`)
+      when FileDiff
+        parse_diff(
+          `git diff #{s.from_commit} #{s.to_commit} #{s.files.join(" ")}`)
+      when StaticFiles
+        git_cat(s)
+      else
+        raise INVALID_SAMPLE
+      end
+    end
+
+    def diff(from, to=nil, files=nil)
       (files.kind_of?(Array) && !files.empty?) ?
         FileDiff.new(from, to, files) :
-        Diff.new(from, to)
+        (to.nil? ?
+          Diff1.new(from) :
+          Diff2.new(from, to))
     end
 
     def static(commit, files)
       StaticFiles.new(commit, files)
+    end
+
+    def show(commit)
+      Show.new(commit)
     end
   end
 end

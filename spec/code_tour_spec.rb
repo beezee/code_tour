@@ -6,7 +6,7 @@ module TestRender
     blocks.map do |b|
       "{{\n"+
       b.sample.map do |f|
-        f.lines.map { |s| "#{s.number} - #{s.content}" }.join("\n")
+        f.lines.map { |s| "#{s.old_number} - #{s.content}" }.join("\n")
       end.join("\n") +
       "\n}}\n" +
       "#{b.content}"
@@ -30,7 +30,7 @@ module TestVCI
   def format_sample(sample)
     [CodeTour::CodeSample::SampleFile.new("file",
       sample.downcase.split("\n").each_with_index.map do |l, i|
-        CodeTour::CodeSample::SampleLine.new(i+1, l)
+        CodeTour::CodeSample::SampleLine.new(i+1, nil, l)
       end)]
   end
 end
@@ -49,7 +49,7 @@ describe CodeTour do
     expect(t.formatted_blocks).to eq(
       [CodeTour::Definition::Block.new(
         [CodeTour::CodeSample::SampleFile.new("file",
-          [CodeTour::CodeSample::SampleLine.new(1, "foo")])], "BAR")])
+          [CodeTour::CodeSample::SampleLine.new(1, nil, "foo")])], "BAR")])
   end
 
   it 'renders blocks using provided implementations' do
