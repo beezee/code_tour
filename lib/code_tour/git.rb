@@ -24,10 +24,10 @@ module CodeTour
 
     def git_cat(sample)
       sample.files.map do |f|
-        CodeSample::SampleFile.new(f,
+        CodeSample::SampleFileStatic.new(f,
           `#{git_cat_command(sample.commit, f)}`
             .split("\n").each_with_index.map do |l, i|
-              CodeSample::SampleLine.new(i+1, l)
+              CodeSample::SampleLine.new(i+1, i+1, l)
             end)
       end
     end
