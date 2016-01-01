@@ -70,7 +70,7 @@ module CodeTour
 
     def add_line_to_lcl(type, lcl, line)
       lcl_ct = lcl_constructors[type]
-      unless (lcl_ct.kind_of?(Array) && lcl.size == 2)
+      unless (lcl_ct.kind_of?(Array) && lcl_ct.size == 4)
         raise "Invalid type #{type} provided for new line in diff"
       end
       LineCountWithLines.new(
