@@ -21,8 +21,8 @@ module CodeTour
           else
             :black
           end
-        "#{l.old_number.to_s.center(5)} | ".colorize(color) <<
-        "#{l.new_number.to_s.center(5)} | #{l.content}".colorize(color)
+        ("#{l.old_number.to_s.center(5)} | " <<
+        "#{l.new_number.to_s.center(5)} | #{l.content}").colorize(color)
       end.join("\n")
     end
 
