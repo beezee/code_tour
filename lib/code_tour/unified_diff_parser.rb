@@ -98,7 +98,7 @@ module CodeTour
         .flat_map do |(header, chunk_lines)|
           [CodeTour::CodeSample::ChunkHeaderLine.new(nil, nil, header)] +
           chunk_lines
-            .split("\n")
+            .split("\n")[1..-1]
             .inject(lines_with_counts(header)) do |ct, l|
               parse_line_with_count(ct, l)
             end.lines
