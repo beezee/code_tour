@@ -9,15 +9,8 @@ module TestRender
         f.lines.map { |s| "#{s.old_number} - #{s.content}" }.join("\n")
       end.join("\n") +
       "\n}}\n" +
-      "#{b.content}"
+      "#{b.content.upcase}"
     end.join("\n")
-  end
-end
-
-module TestCF
-
-  def format_content(content)
-    content.upcase
   end
 end
 
@@ -43,19 +36,17 @@ describe CodeTour do
   it 'formats blocks using provided implementations' do
     t = CodeTour.define do
       version_control_integration(TestVCI)
-      content_formatter(TestCF)
       block("FOO") { "bar" }
     end
     expect(t.formatted_blocks).to eq(
       [CodeTour::Definition::Block.new(
         [CodeTour::CodeSample::SampleFile.new("file",
-          [CodeTour::CodeSample::SampleLine.new(1, nil, "foo")])], "BAR")])
+          [CodeTour::CodeSample::SampleLine.new(1, nil, "foo")])], "bar")])
   end
 
   it 'renders blocks using provided implementations' do
     t = CodeTour.define do
       version_control_integration(TestVCI)
-      content_formatter(TestCF)
       renderer(TestRender)
       block("FOO") { "bar" }
       block("BAZ\nBAR") { "quux" }

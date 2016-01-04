@@ -8,12 +8,15 @@ module CodeTour
     FileDiff = Struct.new(:from_commit, :to_commit, :files)
     StaticFiles = Struct.new(:commit, :files)
 
-    INVALID_SAMPLE = "Invalid code sample specified for Git integration"
+    def invalid_sample(sample)
+      raise "Invalid code sample specified for Git integration: " +
+        sample.to_s
+    end
 
     def validate_code_sample!(code_sample)
       unless [Show, Diff1, Diff2, FileDiff, StaticFiles]
                 .include?(code_sample.class)
-        raise INVALID_SAMPLE
+        invalid_sample(code_sample)
       end
     end
 
@@ -53,7 +56,7 @@ module CodeTour
       when StaticFiles
         git_cat(s)
       else
-        raise INVALID_SAMPLE
+        invalid_sample(s)
       end
     end
 

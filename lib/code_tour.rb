@@ -54,15 +54,19 @@ module CodeTour
     end
 
     def validated_formatted_sample!(sample)
-      format_sample(sample).tap do |formatted|
-        unless formatted.kind_of?(Array) &&
-                  formatted.all? do |f|
-                    f.kind_of?(CodeSample::SampleFile) &&
-                    f.valid?
-                  end
-          raise "Invalid sample output, make sure "+
-                  "version_control_integration#format_sample "+
-                  "returns array of valid SampleFile instances"
+      if sample.kind_of?(Array) && sample.empty?
+        sample
+      else
+        format_sample(sample).tap do |formatted|
+          unless formatted.kind_of?(Array) &&
+                    formatted.all? do |f|
+                      f.kind_of?(CodeSample::SampleFile) &&
+                      f.valid?
+                    end
+            raise "Invalid sample output, make sure "+
+                    "version_control_integration#format_sample "+
+                    "returns array of valid SampleFile instances"
+          end
         end
       end
     end
@@ -81,9 +85,11 @@ module CodeTour
     end
 
     private
-    def block(code_sample, &block)
-      validate_code_sample!(code_sample)
-      @blocks.push(Block.new(code_sample, block.call))
+    def block(code_sample = nil)
+      unless code_sample.nil?
+        validate_code_sample!(code_sample)
+      end
+      @blocks.push(Block.new(code_sample || [], yield))
     end
   end
 

@@ -80,32 +80,41 @@
   <body>
     <div class="container">
     <% rendered_blocks.each do |block| %>
-      <div class="row">
-        <div class="five columns">
-          <%= block.content %>
+      <% if block.sample.empty? %>
+        <div class="row">
+          <div class="twelve columns">
+            <%= block.content %>
+          </div>
         </div>
-        <div class="seven columns sample">
-          <% block.sample.each do |file| %>
-            <div>
-              <div class="diff-file">
-                <h5><%= file.name %></h5>
-              </div>
-              <div class="code">
-                <% file.lines.each do |line| %>
-                  <div class="row">
-                    <div class="nums two columns">
-                      <%= line.line_numbers %>
+      <% else %>
+        <div class="row">
+          <div class="five columns">
+            <%= block.content %>
+          </div>
+          <div class="seven columns sample">
+            <% block.sample.each do |file| %>
+              <div>
+                <div class="diff-file">
+                  <h5><%= file.name %></h5>
+                </div>
+                <div class="code">
+                  <% file.lines.each do |line| %>
+                    <div class="row">
+                      <div class="nums two columns">
+                        <%= line.line_numbers %>
+                      </div>
+                      <div class="ten columns">
+                        <%= line.content %>
+                      </div>
                     </div>
-                    <div class="ten columns">
-                      <%= line.content %>
-                    </div>
-                  </div>
-                <% end %>
+                  <% end %>
+                </div>
               </div>
-            </div>
-          <% end %>
+            <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
+      <hr />
     <% end %>
     </div>
   </body>
